@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UV-Compatible" content="IE-edge">
+        <title>NodeMyAdmin</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+    </head>
+    <body class="container-fluid">
+        <header class="row">
+            <nav class="col-12 navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <a class="navbar-brand" href="/">NodeMyAdmin</a>
+                <% if( typeof databases != 'undefined' && databases.length ) { %>
+                  <div class="col-md-2 d-inline-block mr-auto">
+                        <form action="/database" method="get">
+                            <select name="db" onchange="this.form.submit();" class="form-control">
+                                <option value="">--Select Database--</option>
+                                <% databases.forEach(function(db, index) { %>
+                                <option <%=(selectedDatabase==db.Database) ? 'selected' : '' %> value="<%=db.Database%>"><%=db.Database%></option>
+                                <% }); %>    
+                            </select>
+                        </form>
+                  </div>
+                  <% } %>
+                  <ul class="navbar-nav ml-auto">
+                      <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                      </li>                
+                    </ul>
+              </nav>
+        </header>
+        <main class="row">
+            <div class="sidebar col-md-2 p-2">
+                <nav class="navbar d-block bg-light p-0">
+                    <% if( typeof tables != 'undefined' && tables.length ) { %>
+                    <span class="d-block bg-dark text-light p-2"><%=selectedDatabase%></span>
+                    <ul class="navbar-nav">
+                        <% tables.forEach(function(t, index) { %>
+                        <li class="nav-item border-bottom">
+                            <a class="nav-link text-primary text-break text-wrap px-2 py-1" href="/table?table=<%=t['Tables_in_'+selectedDatabase]%>"><%=t['Tables_in_'+selectedDatabase].toLowerCase()%></a>
+                        </li>
+                        <% }); %>
+                    <% } %>
+                </nav>
+            </div>
+            <div class="col-md-10 pt-2 px-2">
+                <% if( typeof table != 'undefined' ) { %>
+                <span class="d-block text-dark font-weight-bold p-2"><%=table%></span>
+                <% } %>
+                <% if( typeof tableData != 'undefined' && tableData.length ) { %>
+                <div class="table-responsive-sm">
+                    <table border="1" class="table text-sm table-sm">
+                            <% tableData.forEach(function(rowObj, index) { 
+                                keys = Object.keys(rowObj);
+                            if(index == 0) { %>
+                            <thead class="bg-dark font-weight-normal text-light">
+                                <tr>
+                                    <% Object.keys(rowObj).forEach(function(key, index){ %>
+                                    <th class="font-weight-normal"><%=key%></th>
+                                    <% }); %>
+                                </tr>
+                            </thead>
+                            <% } %>
+                            <tbody>
+                            <tr>
+                                <% Object.keys(rowObj).forEach(function(key, index){ %>
+                                <td><%=rowObj[key]%></td>
+                                <% }); %>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } %>
+            </div>
+        </main>
+        <footer>
+        </footer>
+    </body>
+</html>
